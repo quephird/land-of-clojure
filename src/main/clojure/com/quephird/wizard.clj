@@ -78,3 +78,28 @@
 (defn inventory []
   (objects-at :body *objects* (deref *object-locations*)))
 
+(def *allowed-commands* '(look walk pickup inventory))
+
+(defn game-read []
+  (let [user-input (re-seq #"\S+" (read-line))]
+    (cons (symbol (first user-input)) (map #(keyword %) (rest user-input)))))
+
+(defn game-eval [s-expr]
+  (if (some #{(first s-expr)} *allowed-commands*)
+     (eval s-expr)
+    '(You cannot do that.)))
+
+; Unlike Common Lisp, Clojure does not print things in uppercase by default,
+; so no need for a specialized printer.
+(defn game-print [expr]
+  (println expr))
+
+(defn game-repl []
+  (let [cmd (game-read)]
+    (if (= (first cmd) 'quit)
+      '(Bye bye.)
+      (do
+        (game-print (game-eval cmd))
+        (game-repl)))))
+
+;(game-repl)
