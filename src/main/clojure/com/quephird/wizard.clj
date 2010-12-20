@@ -1,4 +1,6 @@
-(ns com.quephird.wizard)
+(ns com.quephird.wizard
+  (:use [com.quephird.wizard.graphviz])
+)
 
 (defn third [list]
   (first (next (next list))))
@@ -102,4 +104,4 @@
         (game-print (game-eval cmd))
         (game-repl)))))
 
-;(game-repl)
+(create-dot-file "wizard.dot" *nodes* *edges*)
