@@ -1,5 +1,5 @@
 (ns com.quephird.wizard
-  (:use [com.quephird.wizard.graphviz])
+;  (:use com.quephird.wizard.graphviz)
 )
 
 (defn third [list]
@@ -80,7 +80,10 @@
 (defn inventory []
   (objects-at :body *objects* (deref *object-locations*)))
 
-(def *allowed-commands* '(look walk pickup inventory))
+(def *allowed-commands* '(look walk pickup inventory help))
+
+(defn help []
+  (concat '(The following commands can be used-) *allowed-commands*))
 
 (defn game-read []
   (let [user-input (re-seq #"\S+" (read-line))]
@@ -104,4 +107,6 @@
         (game-print (game-eval cmd))
         (game-repl)))))
 
-(create-dot-file "wizard.dot" *nodes* *edges*)
+;(game-repl)
+
+;(create-dot-file "wizard.dot" *nodes* *edges*)
