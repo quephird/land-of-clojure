@@ -46,11 +46,10 @@
 
 (defn move [a]
   (let [translation (*animal-translations* (:direction @a))]
-    (swap! a 
-      (fn[_]
-        (update-in 
-          (update-in @a [:position] #(map + % translation))
-          [:energy] dec)))))
+    (reset! a
+      (update-in 
+        (update-in @a [:position] #(map + % translation))
+        [:energy] dec))))
 
 (defn turn [a]
   (let [gs (:genes @a)
@@ -60,12 +59,12 @@
                 (if (<= diff 0)
                   0
                   (inc (locate-gene (rest genes) diff)))))]
-      (swap! a (fn [_] (assoc-in @a [:direction] (locate-gene gs x)))))))
+      (reset! a (assoc-in @a [:direction] (locate-gene gs x))))))
 
 (defn eat [a]
   (let [animal-position (:position @a)]
     (when (@*plants* animal-position)
-      (swap! a (fn[_] (update-in @a [:energy] + *plant-energy*)))
+      (reset! a (update-in @a [:energy] + *plant-energy*))
       (swap! *plants* dissoc animal-position))))
 
 ; The big difference here is that there is no explicit copy-structure call
@@ -76,7 +75,7 @@
 (defn reproduce [a]
   (let [e (:energy @a)]
     (when (>= e *reproduction-energy*)
-      (swap! a (fn[_] (update-in @a [:energy] #(quot % 2))))
+      (reset! a (update-in @a [:energy] #(quot % 2)))
       (let [gene-idx (rand-int 8)
             original-genes (:genes @a)
             mutated-genes (assoc-in original-genes [gene-idx] (max 1 (+ (original-genes gene-idx) (rand-int 3) -1)))]
